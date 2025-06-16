@@ -1,0 +1,153 @@
+#202001932
+# Arquitectura de Microservicios
+version: '3'
+services:
+  # Deficion de service_product y su base de datos
+  service_product:
+    image: service_product
+    container_name: service_product
+    ports:
+      - "3000:3000"
+
+  service_product_db:
+    depends_on:
+      - service_product
+    image: postgres:latest
+    container_name: service_product_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: service_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - product_db_data:/var/lib/postgresql/data
+    
+# Definición de servicio service_cart y su base de datos
+  service_cart:
+    image: service_cart
+    container_name: service_cart
+    ports:
+      - "3001:3001"
+
+  service_cart_db:
+    depends_on:
+      - service_cart
+    image: mysql:latest
+    container_name: service_cart_db
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: cart_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - cart_db_data:/var/lib/mysql
+
+# Definicion de servicio service_payment y su base de datos
+  service_payment:
+    image: service_payment
+    container_name: service_payment
+    ports:
+      - "3002:3002"
+
+  service_payment_db:
+    depends_on:
+      - service_payment
+    image: postgres:latest
+    container_name: service_product_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: payment
+      POSTGRES_DB: service_payment
+    ports:
+      - "5432:5432"
+    volumes:
+      - product_db_data:/var/lib/postgresql/data
+
+  
+  # Definición de service_offers y su base de datos
+  service_offers:
+    image: service_offers
+    container_name: service_offers
+    ports:
+      - "3003:3003"
+
+  service_offers_db:
+    depends_on:
+      - service_offers
+    image: mysql:latest
+    container_name: service_cart_db
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: service_offers
+      MYSQL_USER: user
+      MYSQL_PASSWORD: mysql_offers
+    ports:
+      - "3306:3306"
+    volumes:
+      - cart_db_data:/var/lib/mysql
+
+  # Definicion de servicio service_orders y su base de datos
+  service_orders:
+    image: service_orders
+    container_name: service_orders
+    ports:
+      - "3004:3004"
+
+  service_orders_db:
+    depends_on:
+      - service_orders
+    image: postgres:latest
+    container_name: service_product_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: payment
+      POSTGRES_DB: service_orders
+    ports:
+      - "5432:5432"
+    volumes:
+      - product_db_data:/var/lib/postgresql/data
+
+  # Definicion service_track y su base de datos
+  service_track:
+    image: service_track
+    container_name: service_track
+    ports:
+      - "3005:3005"
+
+  service_track_db:
+    depends_on:
+      - service_track
+    image: mysql:latest
+    container_name: service_cart_db
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: service_track
+      MYSQL_USER: user
+      MYSQL_PASSWORD: mysql_offers
+    ports:
+      - "3306:3306"
+    volumes:
+      - cart_db_data:/var/lib/mysql
+
+  # Definicion service_stock y su base de datos
+  service_stock:
+    image: service_stock
+    container_name: service_stock
+    ports:
+      - "3006:3006"
+  service_stock_db:
+    depends_on:
+      - service_stock
+    image: postgres:latest
+    container_name: service_product_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: payment
+      POSTGRES_DB: service_stock
+    ports:
+      - "5432:5432"
+    volumes:
+      - product_db_data:/var/lib/postgresql/data
